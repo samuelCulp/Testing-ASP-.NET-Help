@@ -1,0 +1,122 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Computer Name"] = "Computer Name";
+}
+
+<!-- Why are you looking at my code? I don't like that' -->
+<!--You come here often-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Naming Convention Table</title>
+    <link rel="stylesheet" href="~/css/styles.css">
+    <script src="~/js/site.js"></script>
+</head>
+<header>
+    <h1>Ask IT Links and Scripts</h1>
+</header>
+<body>
+    <nav>
+        <ul>
+
+
+        </ul>
+    </nav>
+
+<div>
+        <!-- Search for Naming Conventions -->
+      
+        <input type="text" id="search-naming-convention-input" placeholder="Search Computer Names">
+        <button id="search-naming-convention-button">Search
+
+</div>
+    <div>
+        <!-- Search for Contact names -->
+        
+        <input type="text" id="search-contact-input" placeholder="Search Contacts">
+        <button id="search-contact-button">Search
+
+    </div>
+
+<div id="search-result" style="margin-top: 10px; font-weight: bold;"></div>
+
+    
+    <div id="container">
+        <div id="button-container">
+            <button data-category="ASKIT" data-department="ASKITD">Central IT (ASK IT)</button>
+            <button data-category="Surg" data-department="SURGD">HSIS - Formerly Dept of Surg</button>
+            <button data-category="1917" data-department="1917D">1917 IT Support RISC</button>
+            <button data-category="Maintenance" data-department="MainD">Building Maintenance</button>
+            <button data-category="COLLAT" data-department="COLLATD">COLLAT School of Biz</button>
+            <button data-category="HSISID" data-department="HSISIDD">HSIS Identity Mgmt</button>
+            <button data-category="Optometry" data-department="OptoD">Optometry</button>
+            <button data-category="SOD" data-department="SODD">School of Denistry (SDBIT)</button>
+            <button data-category="WBHM" data-department="WBHMD">WBHM</button>
+            <button data-category="AOC" data-department="AOCD">Alabama Organ Center</button>
+            <button data-category="Callahan" data-department="CallahanD">Callahan Eye Hosp</button>
+            <button data-category="Digital" data-department="DigitalD">Digital Strategy</button>
+            <button data-category="HSISAsset" data-department="HSISAssetD">HSIS Asset Management</button>
+            <button data-category="Huntsville" data-department="HuntsvilleD">Huntsville IT (HSV)</button>
+            <button data-category="Path" data-department="PathD">Pathology IT</button>
+            <button data-category="SOE" data-department="SOED">School of Engineering (SOE)</button>
+            <button data-category="Anesthesia" data-department="AnesthesiaD">Acesthesia</button>
+            <button data-category="CCTSF" data-department="CCTSFD">Cancer Center (CCTSF IT)</button>
+            <button data-category="DOM" data-department="DOMD">DOM - Dept. of Medicine</button>
+            <button data-category="HSISBA" data-department="HSISBAD">HSIS Business Apps</button>
+            <button data-category="ICO" data-department="ICOD">Institute for Cancer Outcomes</button>
+            <button data-category="PEDS" data-department="PEDSD">PEDS IT</button>
+            <button data-category="MEIS" data-department="MEISD">School of Medicine (MEIS)</button>
+            <button data-category="AV" data-department="AVD">AV</button>
+            <button data-category="CASIT" data-department="CASITD">CASIT</button>
+            <button data-category="DOPM" data-department="DOPMD">DOPM - Preventive Med</button>
+            <button data-category="HSISHD" data-department="HSISHDD">HSIS Help Desk</button>
+            <button data-category="Neuro" data-department="NeuroD">Neurobiology</button>
+            <button data-category="Physical" data-department="PhysicalD">Physical Med & Rehab</button>
+            <button data-category="TvRepair" data-department="TvD">UAB TV Repair</button>
+            <button data-category="Biochem" data-department="BiochemD">Biochem & Molecular</button>
+            <button data-category="Facilities" data-department="FacilitiesD">Facilities IT</button>
+            <button data-category="HSISSYS" data-department="HSISSYSD">HSIS Help Desk (SysAdmins)</button>
+            <button data-category="OBGYN" data-department="OBGYND">OB/GYN IT</button>
+            <button data-category="RepairComm" data-department="RepairCommD">RepairComm Backline</button>
+            <button data-category="Viva" data-department="VivaD">Viva Health IT</button>
+        </div>
+
+     @*   <h2 id="current-table-name">Computer Names</h2>*@
+
+        <div class="table-container">
+            <table id="naming-convention-table">
+                <thead>
+                    <tr>
+                        <th>Computer Names</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table content will be inserted here -->
+                    <th>Contacts</th>
+                </tbody>
+            </table>
+        </div>
+        <h2>Department Contacts</h2>
+        <div class="table-container">
+            <table id="department-contact-table">
+                <thead>
+                    <tr>
+                        <th>Contacts</th>
+                        <th>Contact Email</th>
+                        <th>Dept. Phone</th>
+                        <th>Distribution Group</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table content will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+  
+</body>
+</html>
