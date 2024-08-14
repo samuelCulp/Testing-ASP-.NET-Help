@@ -1,0 +1,17 @@
+﻿@page
+@model Testing_ASP_.NET.Pages.ReadJSONModel
+@{
+}
+
+
+<h2>Naming Conventions</h2>
+@foreach (var category in Model.NamingConventions)
+{
+    <h3>@category.Key</h3>
+    <ul>
+        @foreach (var item in category.Value)
+        {
+            <li>@item</li>
+        }
+    </ul>
+}
