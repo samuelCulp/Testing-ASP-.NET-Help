@@ -1,14 +1,18 @@
-﻿namespace Testing_ASP_.NET.Pages
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+
+namespace Testing_ASP_.NET.Pages
 {
-    public class ComputerDepot
+    public class NamingConventionModel
     {
-        public string DepotName { get; set; }
-        public string ComputerName { get; set;}
-        public List<ComputerDepot>? Computers { get; internal set; }
+        public Dictionary<string, List<string>> ConventionCategories { get; set; }
     }
 
-    public class ComputerDepotData
+
+/*    public class CategoryUpdateRequest
     {
-        public List<ComputerDepot> Computer { get; set; }
-    }
+        public string Category { get; set; } // Ensure there's only one 'Category' property
+        public List<string> Conventions { get; set; }
+    }*/
+
 }

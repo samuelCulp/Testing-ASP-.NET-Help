@@ -1,17 +1,109 @@
 ﻿@page
 @model Testing_ASP_.NET.Pages.ReadJSONModel
 @{
+    ViewData["Title"] = "Edit Naming Conventions";
 }
 
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/styles.css">
+    <title>Naming Conventions</title>
+</head>
+<body>
+    <h2>Naming Conventions</h2>
 
-<h2>Naming Conventions</h2>
-@foreach (var category in Model.NamingConventions)
-{
-    <h3>@category.Key</h3>
-    <ul>
-        @foreach (var item in category.Value)
+    @if (Model.NamingConventions.Count > 0)
+    {
+        @foreach (var category in Model.NamingConventions)
         {
-            <li>@item</li>
+            <h3>@category.Key</h3>
+            <div class="table-container">
+                <form method="post" data-category="@category.Key" class="saveForm">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Convention</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < category.Value.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="text" name="convention" value="@category.Value[i]" />
+                                    </td>
+                                    <td>
+                                        <button type="button" class="remove-item" data-index="@i">Remove</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <button type="button" class="add-item">Add New Item</button>
+                    <button type="submit" class="save-button">Save Changes</button>
+                </form>
+            </div>
         }
-    </ul>
-}
+    }
+    else
+    {
+        <p>No naming conventions found.</p>
+    }
+
+    <script>
+        document.querySelectorAll('.saveForm').forEach(form => {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const category = this.dataset.category;
+                const conventions = Array.from(this.querySelectorAll('input[name="convention"]')).map(input => input.value);
+
+                fetch('/ReadJSON?handler=SaveCategory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        category: category,
+                        conventions: conventions
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Changes saved successfully!');
+                        } else {
+                            alert('Failed to save changes.');
+                        }
+                    });
+            });
+        });
+
+        // Add new item to the list
+        document.querySelectorAll('.add-item').forEach(button => {
+            button.addEventListener('click', function () {
+                const tbody = this.closest('form').querySelector('tbody');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                            <td><input type="text" name="convention" value="" /></td>
+                            <td><button type="button" class="remove-item">Remove</button></td>
+                        `;
+                tbody.appendChild(newRow);
+
+                // Attach event listener to the remove button
+                newRow.querySelector('.remove-item').addEventListener('click', function () {
+                    this.closest('tr').remove();
+                });
+            });
+        });
+
+        // Remove item from the list
+        document.querySelectorAll('.remove-item').forEach(button => {
+            button.addEventListener('click', function () {
+                this.closest('tr').remove();
+            });
+        });
+    </script>
+</body>
+</html>
