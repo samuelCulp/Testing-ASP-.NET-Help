@@ -1,37 +1,3 @@
-/*using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
-
-namespace Testing_ASP_.NET.Pages
-{
-    public class ReadJSONModel : PageModel
-    {
-        public Dictionary<string, List<string>> NamingConventions { get; set; }
-
-        public void OnGet()
-        {
-            var jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "mydata", "namingConventions.json");
-
-            if (System.IO.File.Exists(jsonFilePath))
-            {
-                var jsonData = System.IO.File.ReadAllText(jsonFilePath);
-                var namingConventionData = JsonConvert.DeserializeObject<NamingConventionModel>(jsonData);
-
-                NamingConventions = namingConventionData?.NamingConventions ?? new Dictionary<string, List<string>>();
-            }
-            else
-            {
-                NamingConventions = new Dictionary<string, List<string>>();
-                ModelState.AddModelError(string.Empty, "The data file could not be found.");
-            }
-        }
-    }
-}
-*/
-
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -42,9 +8,64 @@ namespace Testing_ASP_.NET.Pages
 {
     public class ReadJSONModel : PageModel
     {
-        public Dictionary<string, List<string>> NamingConventions { get; set; }
+        [BindProperty]
+        public string Category { get; set; }
+
+        [BindProperty]
+        public List<string> Conventions { get; set; }
+
+        [BindProperty]
+        public int? RemoveIndex { get; set; }
+
+        public Dictionary<string, List<string>> NamingConventions { get; set; } = new();
 
         public void OnGet()
+        {
+            LoadJsonData();
+        }
+
+        public IActionResult OnPost()
+        {
+            /*            LoadJsonData();
+
+                        if (RemoveIndex.HasValue)
+                        {
+                            // Handle item removal
+                            Conventions.RemoveAt(RemoveIndex.Value);
+                        }
+                        else if (!string.IsNullOrEmpty(Category) && Conventions != null)
+                        {
+                            // Update or add the category
+                            NamingConventions[Category] = Conventions;
+                            SaveJsonData();
+                        }
+
+                        return RedirectToPage(); // To refresh the page and reflect changes*/
+
+
+            LoadJsonData();
+
+            if (!string.IsNullOrEmpty(Category) && Conventions != null)
+            {
+                if (RemoveIndex.HasValue)
+                {
+                    // Check if the index is within range before removing
+                    if (RemoveIndex.Value >= 0 && RemoveIndex.Value < Conventions.Count)
+                    {
+                        Conventions.RemoveAt(RemoveIndex.Value);
+                    }
+                }
+
+                // Update the category with the modified conventions
+                NamingConventions[Category] = Conventions;
+                SaveJsonData();
+            }
+
+            return RedirectToPage(); // Refresh the page to reflect the updated data
+
+        }
+
+        private void LoadJsonData()
         {
             var jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "mydata", "namingConventions.json");
 
@@ -57,63 +78,20 @@ namespace Testing_ASP_.NET.Pages
                 {
                     NamingConventions = jsonObject["namingConventions"];
                 }
-                else
-                {
-                    NamingConventions = new Dictionary<string, List<string>>();
-                    ModelState.AddModelError(string.Empty, "Invalid JSON structure.");
-                }
-            }
-            else
-            {
-                NamingConventions = new Dictionary<string, List<string>>();
-                ModelState.AddModelError(string.Empty, "The data file could not be found.");
             }
         }
 
-        public IActionResult OnPostSaveCategory([FromBody] CategoryUpdateRequest request)
+        private void SaveJsonData()
         {
             var jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "mydata", "namingConventions.json");
 
-            if (System.IO.File.Exists(jsonFilePath))
+            var jsonObject = new Dictionary<string, Dictionary<string, List<string>>>
             {
-                var jsonData = System.IO.File.ReadAllText(jsonFilePath);
-                var jsonObject = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, List<string>>>>(jsonData);
+                { "namingConventions", NamingConventions }
+            };
 
-                if (jsonObject == null)
-                {
-                    jsonObject = new Dictionary<string, Dictionary<string, List<string>>>();
-                }
-
-                if (!jsonObject.ContainsKey("namingConventions"))
-                {
-                    jsonObject["namingConventions"] = new Dictionary<string, List<string>>();
-                }
-
-                var namingConventions = jsonObject["namingConventions"];
-
-                if (namingConventions.ContainsKey(request.Category))
-                {
-                    namingConventions[request.Category] = request.Conventions;
-                }
-                else
-                {
-                    namingConventions.Add(request.Category, request.Conventions);
-                }
-
-                // Save updated JSON
-                var updatedJsonData = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
-                System.IO.File.WriteAllText(jsonFilePath, updatedJsonData);
-
-                return new JsonResult(new { success = true });
-            }
-
-            return new JsonResult(new { success = false });
+            var updatedJsonData = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
+            System.IO.File.WriteAllText(jsonFilePath, updatedJsonData);
         }
-    }
-
-    public class CategoryUpdateRequest
-    {
-        public string Category { get; set; }
-        public List<string> Conventions { get; set; }
     }
 }

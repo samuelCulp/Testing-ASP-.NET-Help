@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadData() {
     // Load the JSON data for naming conventions
-    fetch('/mydata/namingConventions.json')
+    fetch('/mydata/namingConventions.json', { cache: 'no-store' })// cache no-store stops the browser from saving the table info
         .then(response => response.json())
         .then(jsonData => {
             window.namingConventions = jsonData.namingConventions;
@@ -31,7 +31,7 @@ function loadData() {
         });
 
     // Load the JSON data for contact information
-    fetch('/mydata/contactInfo.json')
+    fetch('/mydata/contactInfo.json', { cache: 'no-store' })
         .then(response => response.json())
         .then(jsonData => {
             window.data = jsonData.data;
