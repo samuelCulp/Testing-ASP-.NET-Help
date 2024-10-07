@@ -1,0 +1,288 @@
+﻿@page
+@model Testing_ASP_.NET.Pages.ReadJSONContactModel
+@{
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true">
+    <title>Contact Information</title>
+</head>
+<body>
+    <h2>Contact Information</h2>
+
+    @if (Model.data.Count > 0)
+    {
+        @foreach (var category in Model.data)
+        {
+            <h3>@category.Key</h3>
+            <div class="table-container">
+                <form method="post" data-category="@category.Key" class="saveForm">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Contact</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Group</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < category.Value.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="text" name="contact" value="@category.Value[i].Contact" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="email" value="@category.Value[i].Email" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="phone" value="@category.Value[i].Phone" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="group" value="@category.Value[i].Group" />
+                                    </td>
+                                    <td>
+                                        <button type="button" class="remove-item" data-index="@i">Remove</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <button type="button" class="add-item">Add New Contact</button>
+                    <button type="submit" class="save-button">Save Changes</button>
+                </form>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No contact information found.</p>
+    }
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.saveForm').forEach(form => {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    const category = this.dataset.category;
+
+                    // Fetching the convention inputs
+                    const conventions = Array.from(this.querySelectorAll('input[name="convention"]'))
+                        .map(input => input.value)
+                        .filter(value => value.trim() !== ''); // Only include non-empty values
+
+                    const requestBody = {
+                        categoryContact: category,
+                        conventionsContact: conventions.length > 0 ? conventions : [""] // Send an empty string if no conventions
+                    };
+
+                    console.log("Sending request:", requestBody); // Log the request body
+
+                    fetch('/ReadJSON?handler=SaveCategory', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Bad response from server');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                alert('Changes saved successfully!');
+                            } else {
+                                alert('Failed to save changes.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error saving category:', error);
+                        });
+                });
+            });
+
+
+
+
+
+            // Add new contact row to the list
+            document.querySelectorAll('.add-item').forEach(button => {
+                button.addEventListener('click', function () {
+                    const tbody = this.closest('form').querySelector('tbody');
+
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td><input type="text" name="contact" value="" /></td>
+                        <td><input type="text" name="email" value="" /></td>
+                        <td><input type="text" name="phone" value="" /></td>
+                        <td><input type="text" name="group" value="" /></td>
+                        <td><button type="button" class="remove-item">Remove</button></td>
+                    `;
+                    tbody.appendChild(newRow);
+
+                    // Attach remove event listener to the newly added remove button
+                    newRow.querySelector('.remove-item').addEventListener('click', function () {
+                        this.closest('tr').remove();
+                    });
+                });
+            });
+
+            // Attach remove event listener to existing remove buttons
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', function () {
+                    this.closest('tr').remove();
+                });
+            });
+        });
+
+    </script>
+
+    //<script src="~/js/contact.js"></script>
+</body>
+</html>
+
+
+
+@* <!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/styles.css">
+    <title>Contact Information</title>
+</head>
+<body>
+    <h2>Contact Information</h2>
+
+    @if (Model.data != null && Model.data.Count > 0)
+    {
+        @foreach (var category in Model.data)
+        {
+            <h3>@category.Key</h3>
+            <div class="table-container">
+                <form method="post" data-category="@category.Key" class="saveForm">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Contact</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Group</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < category.Value.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="text" name="contact" value="@category.Value[i].Contact" />
+                                    </td>
+                                    <td>
+                                        <input type="email" name="email" value="@category.Value[i].Email" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="phone" value="@category.Value[i].Phone" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="group" value="@category.Value[i].Group" />
+                                    </td>
+                                    <td>
+                                        <button type="button" class="remove-item" data-index="@i">Remove</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <button type="button" class="add-item">Add New Item</button>
+                    <button type="submit" class="save-button">Save Changes</button>
+                </form>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No contact information found.</p>
+    }
+
+    <script>
+
+        body: JSON.stringify({
+            CategoryContact: category, // `category` is correct
+            ConventionsContact: conventions //
+        })
+
+
+        document.querySelectorAll('.saveForm').forEach(form => {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const category = this.dataset.category;
+                const conventions = Array.from(this.querySelectorAll('tbody tr')).map(row => ({
+                    contact: row.querySelector('input[name="contact"]').value,
+                    email: row.querySelector('input[name="email"]').value,
+                    phone: row.querySelector('input[name="phone"]').value,
+                    group: row.querySelector('input[name="group"]').value
+                }));
+
+                fetch('/ReadJSON?handler=SaveCategory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        CategoryContact: category,
+                        ConventionsContact: conventions
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Changes saved successfully!');
+                        } else {
+                            alert('Failed to save changes.');
+                        }
+                    });
+            });
+        });
+
+        // Add new item to the list ....
+        document.querySelectorAll('.add-item').forEach(button => {
+            button.addEventListener('click', function () {
+                const tbody = this.closest('form').querySelector('tbody');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                            <td><input type="text" name="contact" value="" /></td>
+                            <td><input type="email" name="email" value="" /></td>
+                            <td><input type="text" name="phone" value="" /></td>
+                            <td><input type="text" name="group" value="" /></td>
+                            <td><button type="button" class="remove-item">Remove</button></td>
+                        `;
+                tbody.appendChild(newRow);
+
+                // Attach event listener to the remove button
+                newRow.querySelector('.remove-item').addEventListener('click', function () {
+                    this.closest('tr').remove();
+                });
+            });
+        });
+
+        // Remove item from the list
+        document.querySelectorAll('.remove-item').forEach(button => {
+            button.addEventListener('click', function () {
+                this.closest('tr').remove();
+            });
+        });
+    </script>
+</body>
+</html>
+ *@
+
+
+
